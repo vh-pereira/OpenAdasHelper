@@ -69,11 +69,12 @@ class IonisationPEC:
     def evaluate(self, density, temperature):
 
         # need to handle zeros, also density and temperature can become negative due to cubic interpolation
-        if density <= 0 or temperature <= 0:
+        if density.all() <= 0 or temperature.all() <= 0:
             return 0
 
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
         # calculate PEC and convert from log10 space to linear space
-        return 10 ** self._pec([np.log10(density), np.log10(temperature)])
+        return 10 ** self._pec(pts)
 
 class NullIonisationPEC:
     """
@@ -131,13 +132,13 @@ class RecombinationPEC:
         )
 
     def evaluate(self, density, temperature):
-
         # need to handle zeros, also density and temperature can become negative due to cubic interpolation
-        if density <= 0 or temperature <= 0:
+        if density.all() <= 0 or temperature.all() <= 0:
             return 0
 
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
         # calculate PEC and convert from log10 space to linear space
-        return 10 ** self._pec([np.log10(density), np.log10(temperature)])
+        return 10 ** self._pec(pts)
 
 class NullRecombinationPEC:
     """
@@ -196,11 +197,12 @@ class ThermalCXPEC:
     def evaluate(self, density, temperature):
 
         # need to handle zeros, also density and temperature can become negative due to cubic interpolation
-        if density <= 0 or temperature <= 0:
+        if density.all() <= 0 or temperature.all() <= 0:
             return 0
 
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
         # calculate PEC and convert from log10 space to linear space
-        return 10 ** self._pec([np.log10(density), np.log10(temperature)])
+        return 10 ** self._pec(pts)
 
 class NullThermalCXPEC:
     """
@@ -259,11 +261,12 @@ class ImpactExcitationPEC:
     def evaluate(self, density, temperature):
 
         # need to handle zeros, also density and temperature can become negative due to cubic interpolation
-        if density <= 0 or temperature <= 0:
+        if density.all() <= 0 or temperature.all() <= 0:
             return 0
 
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
         # calculate PEC and convert from log10 space to linear space
-        return 10 ** self._pec([np.log10(density), np.log10(temperature)])
+        return 10 ** self._pec(pts)
 
 class NullImpactExcitationPEC:
     """
