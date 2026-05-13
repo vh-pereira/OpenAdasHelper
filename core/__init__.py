@@ -1,3 +1,3 @@
 # AdasReader.src package marker
 
-from .core.main import OpenADAS
+from .main import OpenADAS
