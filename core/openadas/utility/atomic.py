@@ -21,8 +21,8 @@ import os
 import json
 import numpy as np
 
-from src.utility.recursivedict import RecursiveDict
-from src.openadas.utility import DEFAULT_REPOSITORY_PATH
+from ...utility.recursivedict import RecursiveDict
+from .utils import DEFAULT_REPOSITORY_PATH
 
 
 def add_ionisation_rate(species, charge, rate, repository_path=None):
@@ -74,11 +74,7 @@ def update_ionisation_rates(rates, repository_path=None):
 
     for species, rate_data in rates.items():
 
-        # sanitise and validate arguments
-        if not isinstance(species, Element):
-            raise TypeError('The species must be an Element object.')
-
-        path = os.path.join(repository_path, 'ionisation/{}.json'.format(species.symbol.lower()))
+        path = os.path.join(repository_path, 'ionisation/{}.json'.format(species))
 
         _update_and_write_adf11(species, rate_data, path)
 

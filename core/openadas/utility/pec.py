@@ -19,7 +19,7 @@
 import os
 import json
 import numpy as np
-from src.utility.recursivedict import RecursiveDict
+from ...utility.recursivedict import RecursiveDict
 from .utils import DEFAULT_REPOSITORY_PATH, encode_transition
 
 """

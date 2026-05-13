@@ -22,11 +22,10 @@ import numpy as np
 import os
 import json
 
-from src.openadas.utility import pec
-from src.utility.recursivedict import RecursiveDict
-from src.utility.conversion import PerCm3ToPerM3, Cm3ToM3
-from src.openadas import parse_files as parser
-
+from . import pec
+from ...utility.recursivedict import RecursiveDict
+from ...utility.conversion import PerCm3ToPerM3, Cm3ToM3
+from .. import parse_files as parser
 
 OPENADAS_FILE_URL = 'http://open.adas.ac.uk/download/'
 

@@ -1,7 +1,7 @@
 import numpy as np
 import re
 
-from src.utility.conversion import PerCm3ToPerM3, Cm3ToM3
+from ...utility.conversion import PerCm3ToPerM3, Cm3ToM3
 
 
 def _group_by_block(source_file, match_string):

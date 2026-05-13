@@ -18,8 +18,8 @@
 
 import re
 import numpy as np
-from src.utility.recursivedict import RecursiveDict
-from src.utility.conversion import Cm3ToM3, PerCm3ToPerM3
+from ...utility.recursivedict import RecursiveDict
+from ...utility.conversion import Cm3ToM3, PerCm3ToPerM3
 
 
 _L_LOOKUP = {
