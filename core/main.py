@@ -16,9 +16,9 @@
 # See the Licence for the specific language governing permissions and limitations
 # under the Licence.
 
-from core.openadas.utility.utils import DEFAULT_REPOSITORY_PATH
-from core.openadas import utility as repository
-from core.utility.rates import *
+from .openadas.utility.utils import DEFAULT_REPOSITORY_PATH
+from .openadas import utility as repository
+from .utility.rates import *
 
 class OpenADAS:
     """
