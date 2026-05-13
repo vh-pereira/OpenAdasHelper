@@ -29,7 +29,7 @@ from .. import parse_files as parser
 
 OPENADAS_FILE_URL = 'http://open.adas.ac.uk/download/'
 
-DEFAULT_REPOSITORY_PATH = os.path.join(os.getcwd(), "openadas/data")
+DEFAULT_REPOSITORY_PATH = os.path.join(os.getcwd(), ".openadas/data")
 
 """
 Utilities for managing the local rate repository.
