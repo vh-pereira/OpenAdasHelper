@@ -219,3 +219,6 @@ __marimo__/
 
 # Ignore all files in the .idea folder
 .idea/*
+
+# Ignore all openadas data files
+core/openadas/data/*
