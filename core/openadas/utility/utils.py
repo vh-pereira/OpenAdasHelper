@@ -23,13 +23,15 @@ import os
 import json
 
 from . import pec
+from ...utility.rootfind import find_repo_root
 from ...utility.recursivedict import RecursiveDict
 from ...utility.conversion import PerCm3ToPerM3, Cm3ToM3
 from .. import parse_files as parser
 
 OPENADAS_FILE_URL = 'http://open.adas.ac.uk/download/'
 
-DEFAULT_REPOSITORY_PATH = os.path.join(os.getcwd(), ".openadas/data")
+REPO_ROOT = find_repo_root()
+DEFAULT_REPOSITORY_PATH = os.path.join(REPO_ROOT, ".openadas/data")
 
 """
 Utilities for managing the local rate repository.
