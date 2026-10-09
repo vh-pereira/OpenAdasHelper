@@ -35,7 +35,7 @@ class OpenADAS:
     """
 
     def __init__(self, populate=True, data_path=None, permit_extrapolation=False, missing_rates_return_null=False,
-                 wavelength_element_fallback=False):
+                 wavelength_element_fallback=False, verbose=1):
 
         super().__init__()
         self._data_path = data_path or DEFAULT_REPOSITORY_PATH
@@ -46,13 +46,13 @@ class OpenADAS:
 
         self._wavelength_element_fallback = wavelength_element_fallback
 
-        self._populate() if populate else None
+        self._populate(verbose=verbose) if populate else None
 
     @property
     def data_path(self):
         return self._data_path
 
-    def _populate(self, download=True, repository_path=None, adas_path=None):
+    def _populate(self, download=True, repository_path=None, adas_path=None, verbose=None):
         """
         Populates the OpenADAS repository with a typical set of rates and wavelengths.
 
@@ -86,7 +86,13 @@ class OpenADAS:
                 # ('N',  2, 'adf15/pec96#n/pec96#n_vsu#n2.dat'),    #TODO: OPENADAS DATA CORRUPT
             )
         }
-        repository.install_files(rates, download=download, repository_path=repository_path, adas_path=adas_path)
+        print()
+        print("-" * 60)
+        print(f"OpenAdas initialized. Installing files...")
+        repository.install_files(rates, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
+        print(f"OpenAdas installed files successfully.")
+        print("-" * 60)
+        print()
 
     def wavelength(self, ion, charge, transition):
         """

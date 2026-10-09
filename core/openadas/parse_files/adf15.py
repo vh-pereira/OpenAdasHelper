@@ -39,7 +39,7 @@ _L_LOOKUP = {
     13: 'R',
 }
 
-def parse_adf15(element, charge, adf_file_path, header_format=None):
+def parse_adf15(element, charge, adf_file_path, header_format=None, verbose=None):
     """
     Opens and parses ADAS ADF15 data files.
 
@@ -64,19 +64,19 @@ def parse_adf15(element, charge, adf_file_path, header_format=None):
             try:
                 config = _scrape_metadata_hydrogen(file, element, charge)
             except:
-                print(' - Unable to parse hydrogen transition rates.')
+                print(' - Unable to parse hydrogen transition rates.') if verbose else None
                 return None, None
         elif header_format == 'hydrogen-like':
             try:
                 config = _scrape_metadata_hydrogen_like(file, element, charge)
             except:
-                print(' - Unable to parse hydrogen-like transition rates.')
+                print(' - Unable to parse hydrogen-like transition rates.') if verbose else None
                 return None, None
         else:
             try:
                 config = _scrape_metadata_full(file, element, charge)
             except:
-                print(' - Unable to parse full transition rates.')
+                print(' - Unable to parse full transition rates.') if verbose else None
                 return None, None
 
         # process rate data

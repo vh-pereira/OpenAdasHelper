@@ -122,47 +122,47 @@ def get_wavelength(element, charge, transition, repository_path=None):
         raise RuntimeError('Requested wavelength (element={}, charge={}, transition={})'
                            ' is not available.'.format(element, charge, transition))
 
-def install_files(configuration, download=False, repository_path=None, adas_path=None):
+def install_files(configuration, download=False, repository_path=None, adas_path=None, verbose=None):
 
     for adf in configuration:
         if adf.lower() == 'adf11scd':
             for args in configuration[adf]:
-                install_adf11scd(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11scd(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf11acd':
             for args in configuration[adf]:
-                install_adf11acd(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11acd(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf11ccd':
             for args in configuration[adf]:
-                install_adf11ccd(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11ccd(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf11plt':
             for args in configuration[adf]:
-                install_adf11plt(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11plt(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf11prb':
             for args in configuration[adf]:
-                install_adf11prb(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11prb(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf11prc':
             for args in configuration[adf]:
-                install_adf11prc(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf11prc(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf12':
             for args in configuration[adf]:
-                install_adf12(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf12(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf15':
             for args in configuration[adf]:
-                install_adf15(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf15(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf21':
             for args in configuration[adf]:
-                install_adf21(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf21(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf22bmp':
             for args in configuration[adf]:
-                install_adf22bmp(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf22bmp(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
         if adf.lower() == 'adf22bme':
             for args in configuration[adf]:
-                install_adf22bme(*args, download=download, repository_path=repository_path, adas_path=adas_path)
+                install_adf22bme(*args, download=download, repository_path=repository_path, adas_path=adas_path, verbose=verbose)
 
 
 # todo: move print calls to logging
 
-def install_adf11scd(element, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf11scd(element, file_path, download=False, repository_path=None, adas_path=None, verbose=None):
     """
     Adds the ionisation rate defined in an ADF11 file to the repository.
 
@@ -173,13 +173,14 @@ def install_adf11scd(element, file_path, download=False, repository_path=None, a
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose=verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path)
+    rate_adas = parse_adf11(element, path, verbose=verbose)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "scd")  # convert from adas to cherab notation
 
@@ -196,8 +197,8 @@ def install_adf11acd(element, file_path, download=False, repository_path=None, a
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -209,7 +210,7 @@ def install_adf11acd(element, file_path, download=False, repository_path=None, a
     repository.update_recombination_rates(rate_cherab, repository_path)
 
 def install_adf11ccd(donor_element, donor_charge, receiver_element, file_path, download=False,
-                     repository_path=None, adas_path=None):
+                     repository_path=None, adas_path=None, verbose=None):
     """
     Adds the thermal charge exchange rate defined in an ADF11 file to the repository.
 
@@ -223,8 +224,8 @@ def install_adf11ccd(donor_element, donor_charge, receiver_element, file_path, d
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -238,7 +239,9 @@ def install_adf11ccd(donor_element, donor_charge, receiver_element, file_path, d
 
     repository.update_thermal_cx_rates(rate_cherab_ccd, repository_path)
 
-def install_adf11plt(element, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf11plt(element, file_path,
+                     download=False, repository_path=None, adas_path=None,
+                     verbose=None):
     """
     Adds the line radiated power rates defined in an ADF11 file to the repository.
 
@@ -249,8 +252,8 @@ def install_adf11plt(element, file_path, download=False, repository_path=None, a
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -261,7 +264,9 @@ def install_adf11plt(element, file_path, download=False, repository_path=None, a
 
     repository.update_line_power_rates(rate_cherab, repository_path)
 
-def install_adf11prb(element, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf11prb(element, file_path, download=False,
+                     repository_path=None, adas_path=None,
+                     verbose=None):
     """
     Adds the continuum radiated power rates defined in an ADF11 file to the repository.
 
@@ -272,8 +277,8 @@ def install_adf11prb(element, file_path, download=False, repository_path=None, a
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -284,7 +289,9 @@ def install_adf11prb(element, file_path, download=False, repository_path=None, a
 
     repository.update_continuum_power_rates(rate_cherab, repository_path)
 
-def install_adf11prc(element, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf11prc(element, file_path, download=False,
+                     repository_path=None, adas_path=None,
+                     verbose=None):
     """
     Adds the CX radiated power rates defined in an ADF11 file to the repository.
 
@@ -295,8 +302,8 @@ def install_adf11prc(element, file_path, download=False, repository_path=None, a
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -307,7 +314,9 @@ def install_adf11prc(element, file_path, download=False, repository_path=None, a
 
     repository.update_cx_power_rates(rate_cherab, repository_path)
 
-def install_adf12(donor_ion, donor_metastable, receiver_ion, receiver_charge, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf12(donor_ion, donor_metastable, receiver_ion,
+                  receiver_charge, file_path, download=False,
+                  repository_path=None, adas_path=None, verbose=None):
     """
     Adds the rates in the ADF12 file to the repository.
 
@@ -321,8 +330,8 @@ def install_adf12(donor_ion, donor_metastable, receiver_ion, receiver_charge, fi
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -330,7 +339,8 @@ def install_adf12(donor_ion, donor_metastable, receiver_ion, receiver_charge, fi
     rates = parse_adf12(donor_ion, donor_metastable, receiver_ion, receiver_charge, path)
     repository.update_beam_cx_rates(rates, repository_path)
 
-def install_adf15(element, ionisation, file_path, download=False, repository_path=None, adas_path=None, header_format=None):
+def install_adf15(element, ionisation, file_path, download=False, repository_path=None, adas_path=None,
+                  header_format=None, verbose=None):
     """
     Adds the rates in the ADF15 file to the repository.
 
@@ -342,8 +352,8 @@ def install_adf15(element, ionisation, file_path, download=False, repository_pat
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -362,7 +372,9 @@ def install_adf15(element, ionisation, file_path, download=False, repository_pat
     pec.update_pec_rates(rates, repository_path)
     update_wavelengths(wavelengths, repository_path)
 
-def install_adf21(beam_species, target_ion, target_charge, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf21(beam_species, target_ion, target_charge,
+                  file_path, download=False, repository_path=None,
+                  adas_path=None, verbose=None):
     """
     Adds the beam stopping rate defined in an ADF21 file to the repository.
 
@@ -375,8 +387,8 @@ def install_adf21(beam_species, target_ion, target_charge, file_path, download=F
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -384,7 +396,10 @@ def install_adf21(beam_species, target_ion, target_charge, file_path, download=F
     rate = parse_adf21(beam_species, target_ion, target_charge, path)
     repository.update_beam_stopping_rates(rate, repository_path)
 
-def install_adf22bmp(beam_species, beam_metastable, target_ion, target_charge, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf22bmp(beam_species, beam_metastable,
+                     target_ion, target_charge,
+                     file_path, download=False, repository_path=None,
+                     adas_path=None, verbose=None):
     """
     Adds the beam population rate defined in an ADF22 BMP file to the repository.
 
@@ -398,8 +413,8 @@ def install_adf22bmp(beam_species, beam_metastable, target_ion, target_charge, f
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -407,7 +422,9 @@ def install_adf22bmp(beam_species, beam_metastable, target_ion, target_charge, f
     rate = parse_adf22bmp(beam_species, beam_metastable, target_ion, target_charge, path)
     repository.update_beam_population_rates(rate, repository_path)
 
-def install_adf22bme(beam_species, target_ion, target_charge, transition, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf22bme(beam_species, target_ion, target_charge,
+                     transition, file_path, download=False,
+                     repository_path=None, adas_path=None, verbose=None):
     """
     Adds the beam emission rate defined in an ADF22 BME file to the repository.
 
@@ -421,8 +438,8 @@ def install_adf22bme(beam_species, target_ion, target_charge, transition, file_p
     :param adas_path: Path to ADAS files repository (optional).
     """
 
-    print('Installing {}...'.format(file_path))
-    path = _locate_adas_file(file_path, download, adas_path, repository_path)
+    print('Installing {}...'.format(file_path)) if verbose else None
+    path = _locate_adas_file(file_path, download, adas_path, repository_path, verbose)
     if not path:
         raise ValueError('Could not locate the specified ADAS file.')
 
@@ -430,7 +447,7 @@ def install_adf22bme(beam_species, target_ion, target_charge, transition, file_p
     rate = parse_adf22bme(beam_species, target_ion, target_charge, transition, path)
     repository.update_beam_emission_rates(rate, repository_path)
 
-def _locate_adas_file(file_path, download=False, adas_path=None, repository_path=None):
+def _locate_adas_file(file_path, download=False, adas_path=None, repository_path=None, verbose=None):
 
     path = None
     repository_path = repository_path or DEFAULT_REPOSITORY_PATH
@@ -447,7 +464,7 @@ def _locate_adas_file(file_path, download=False, adas_path=None, repository_path
 
         # is file in cache? if not download...
         if os.path.isfile(target):
-            print(' - ADF file already in cache')
+            print(' - ADF file already in cache') if verbose else None
             path = target
         else:
 
@@ -456,7 +473,7 @@ def _locate_adas_file(file_path, download=False, adas_path=None, repository_path
             if not os.path.isdir(directory):
                 os.makedirs(directory)
 
-            print(" - downloading ADF file '{}' to '{}'".format(file_path, target))
+            print(" - downloading ADF file '{}' to '{}'".format(file_path, target)) if verbose else None
 
             url = urllib.parse.urljoin(OPENADAS_FILE_URL, file_path.replace('#', '][').lstrip('/'))
             urllib.request.urlretrieve(url, target)
