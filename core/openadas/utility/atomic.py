@@ -268,14 +268,14 @@ def get_ionisation_rate(element, charge, repository_path=None):
 
     repository_path = repository_path or DEFAULT_REPOSITORY_PATH
 
-    path = os.path.join(repository_path, 'ionisation/{}.json'.format(element.symbol.lower()))
+    path = os.path.join(repository_path, 'ionisation/{}.json'.format(element.lower()))
     try:
         with open(path, 'r') as f:
             content = json.load(f)
         d = content[str(charge)]
     except (FileNotFoundError, KeyError):
         raise RuntimeError('Requested ionisation rate (element={}, charge={})'
-                           ' is not available.'.format(element.symbol, charge))
+                           ' is not available.'.format(element.lower(), charge))
 
     # convert to numpy arrays
     d['ne'] = np.array(d['ne'], np.float64)
@@ -304,14 +304,14 @@ def get_recombination_rate(element, charge, repository_path=None):
 
     repository_path = repository_path or DEFAULT_REPOSITORY_PATH
 
-    path = os.path.join(repository_path, 'recombination/{}.json'.format(element.symbol.lower()))
+    path = os.path.join(repository_path, 'recombination/{}.json'.format(element.lower()))
     try:
         with open(path, 'r') as f:
             content = json.load(f)
         d = content[str(charge)]
     except (FileNotFoundError, KeyError):
         raise RuntimeError('Requested recombination rate (element={}, charge={})'
-                           ' is not available.'.format(element.symbol, charge))
+                           ' is not available.'.format(element.lower(), charge))
 
     # convert to numpy arrays
     d['ne'] = np.array(d['ne'], np.float64)
@@ -342,8 +342,8 @@ def get_thermal_cx_rate(donor_element, donor_charge, receiver_element, receiver_
 
     repository_path = repository_path or DEFAULT_REPOSITORY_PATH
 
-    rate_path = 'thermal_cx/{0}/{1}/{2}.json'.format(donor_element.symbol.lower(), donor_charge,
-                                                     receiver_element.symbol.lower())
+    rate_path = 'thermal_cx/{0}/{1}/{2}.json'.format(donor_element.lower(), donor_charge,
+                                                     receiver_element.lower())
     path = os.path.join(repository_path, rate_path)
     try:
         with open(path, 'r') as f:
@@ -352,7 +352,7 @@ def get_thermal_cx_rate(donor_element, donor_charge, receiver_element, receiver_
     except (FileNotFoundError, KeyError):
         raise RuntimeError('Requested thermal charge-exchange rate (donor={}, donor charge={}, receiver={})'
                            ' is not available.'
-                           ''.format(donor_element.symbol, donor_charge, receiver_element.symbol, receiver_charge))
+                           ''.format(donor_element.lower(), donor_charge, receiver_element.lower(), receiver_charge))
 
     # convert to numpy arrays
     d['ne'] = np.array(d['ne'], np.float64)
