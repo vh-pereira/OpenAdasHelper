@@ -23,6 +23,7 @@ import os
 import json
 
 from . import pec
+from . import atomic as repository
 from ...utility.rootfind import find_repo_root
 from ...utility.recursivedict import RecursiveDict
 from ...utility.conversion import PerCm3ToPerM3, Cm3ToM3
@@ -180,13 +181,13 @@ def install_adf11scd(element, file_path, download=False, repository_path=None, a
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path, verbose=verbose)
+    rate_adas = parser.parse_adf11(element, path)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "scd")  # convert from adas to cherab notation
 
     repository.update_ionisation_rates(rate_cherab, repository_path)
 
-def install_adf11acd(element, file_path, download=False, repository_path=None, adas_path=None):
+def install_adf11acd(element, file_path, download=False, repository_path=None, adas_path=None, verbose=None):
     """
     Adds the recombination rate defined in an ADF11 file to the repository.
 
@@ -203,7 +204,7 @@ def install_adf11acd(element, file_path, download=False, repository_path=None, a
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path)
+    rate_adas = parser.parse_adf11(element, path)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "acd")  # convert from adas to cherab notation
 
@@ -230,7 +231,7 @@ def install_adf11ccd(donor_element, donor_charge, receiver_element, file_path, d
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(receiver_element, path)
+    rate_adas = parser.parse_adf11(receiver_element, path)
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "ccd")  # convert from adas to cherab notation
 
     # reshape rate dictionary to match cherab convention
@@ -258,7 +259,7 @@ def install_adf11plt(element, file_path,
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path)
+    rate_adas = parser.parse_adf11(element, path)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "plt")  # convert from adas to cherab notation
 
@@ -283,7 +284,7 @@ def install_adf11prb(element, file_path, download=False,
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path)
+    rate_adas = parser.parse_adf11(element, path)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "prb")  # convert from adas to cherab notation
 
@@ -308,7 +309,7 @@ def install_adf11prc(element, file_path, download=False,
         raise ValueError('Could not locate the specified ADAS file.')
 
     # decode file and write out rates
-    rate_adas = parse_adf11(element, path)
+    rate_adas = parser.parse_adf11(element, path)
 
     rate_cherab = _notation_adf11_adas2cherab(rate_adas, "prc")  # convert from adas to cherab notation
 

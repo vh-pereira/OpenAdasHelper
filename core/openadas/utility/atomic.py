@@ -22,7 +22,12 @@ import json
 import numpy as np
 
 from ...utility.recursivedict import RecursiveDict
-from .utils import DEFAULT_REPOSITORY_PATH
+from ...utility.rootfind import find_repo_root
+
+OPENADAS_FILE_URL = 'http://open.adas.ac.uk/download/'
+
+REPO_ROOT = find_repo_root()
+DEFAULT_REPOSITORY_PATH = os.path.join(REPO_ROOT, ".openadas/data")
 
 
 def add_ionisation_rate(species, charge, rate, repository_path=None):
@@ -74,7 +79,7 @@ def update_ionisation_rates(rates, repository_path=None):
 
     for species, rate_data in rates.items():
 
-        path = os.path.join(repository_path, 'ionisation/{}.json'.format(species))
+        path = os.path.join(repository_path, 'ionisation/{}.json'.format(species.lower()))
 
         _update_and_write_adf11(species, rate_data, path)
 
@@ -128,11 +133,7 @@ def update_recombination_rates(rates, repository_path=None):
 
     for species, rate_data in rates.items():
 
-        # sanitise and validate arguments
-        if not isinstance(species, Element):
-            raise TypeError('The species must be an Element object.')
-
-        path = os.path.join(repository_path, 'recombination/{}.json'.format(species.symbol.lower()))
+        path = os.path.join(repository_path, 'recombination/{}.json'.format(species.lower()))
 
         _update_and_write_adf11(species, rate_data, path)
 
@@ -193,15 +194,11 @@ def update_thermal_cx_rates(rates, repository_path=None):
         for donor_charge in rates[donor_element].keys():
             for receiver_element, rate_data in rates[donor_element][donor_charge].items():
 
-                # sanitise and validate arguments
-                if not isinstance(receiver_element, Element):
-                    raise TypeError('The receiver_element must be an Element object.')
-
-                rate_path = 'thermal_cx/{0}/{1}/{2}.json'.format(donor_element.symbol.lower(),
-                                                                 donor_charge, receiver_element.symbol.lower())
+                rate_path = 'thermal_cx/{0}/{1}/{2}.json'.format(donor_element.lower(),
+                                                                 donor_charge, receiver_element.lower())
                 path = os.path.join(repository_path, rate_path)
 
-                _update_and_write_adf11(receiver_element, rate_data, path)
+                _update_and_write_adf11(receiver_element.lower(), rate_data, path)
 
 
 def _update_and_write_adf11(species, rate_data, path):
@@ -215,8 +212,8 @@ def _update_and_write_adf11(species, rate_data, path):
 
         for charge, rates in rate_data.items():
 
-            if not valid_charge(species, charge):
-                raise ValueError('Charge state is larger than the number of protons in the specified species.')
+            #if not valid_charge(species, charge):
+            #    raise ValueError('Charge state is larger than the number of protons in the specified species.')
 
             # sanitise and validate rate data
             te = np.array(rates['te'], np.float64)
