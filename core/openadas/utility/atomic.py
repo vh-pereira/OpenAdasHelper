@@ -134,7 +134,7 @@ def update_recombination_rates(rates, repository_path=None):
     for species, rate_data in rates.items():
 
         path = os.path.join(repository_path, 'recombination/{}.json'.format(species.lower()))
-
+        print("---- Updating recombination rates...")
         _update_and_write_adf11(species, rate_data, path)
 
 
@@ -197,7 +197,7 @@ def update_thermal_cx_rates(rates, repository_path=None):
                 rate_path = 'thermal_cx/{0}/{1}/{2}.json'.format(donor_element.lower(),
                                                                  donor_charge, receiver_element.lower())
                 path = os.path.join(repository_path, rate_path)
-
+                print("---- Updating thermal cx rates...")
                 _update_and_write_adf11(receiver_element.lower(), rate_data, path)
 
 

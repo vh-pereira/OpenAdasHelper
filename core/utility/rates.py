@@ -279,3 +279,203 @@ class NullImpactExcitationPEC:
 
     def evaluate(self, density, temperature):
         return 0.0
+
+class IonisationRate:
+    """
+    Ionisation rate.
+
+    Data is interpolated with cubic spline in log-log space.
+    Nearest neighbour extrapolation is used if extrapolate is True.
+
+    :param dict data: Ionisation rate dictionary containing the following entries:
+
+    |   'ne': 1D array of size (N) with electron density in m^-3,
+    |   'te': 1D array of size (M) with electron temperature in eV,
+    |   'rate': 2D array of size (N, M) with ionisation rate in m^3.s^-1.
+
+    :param bint extrapolate: Enable extrapolation (default=False).
+
+    :ivar tuple density_range: Electron density interpolation range.
+    :ivar tuple temperature_range: Electron temperature interpolation range.
+    :ivar dict raw_data: Dictionary containing the raw data.
+    """
+
+    def __init__(self, data, extrapolate=False):
+
+        self.raw_data = data
+
+        # unpack
+        ne = data['ne']
+        te = data['te']
+        rate = np.log10(data['rate'])
+
+        # store limits of data
+        self.density_range = ne.min(), ne.max()
+        self.temperature_range = te.min(), te.max()
+
+        # interpolate rate
+        # using nearest extrapolation to avoid infinite values at 0 for some rates
+        extrapolation_type = np.nan if not extrapolate else 'none'
+
+        self._rate = RegularGridInterpolator(
+            (np.log10(ne), np.log10(te)),
+            rate,
+            'cubic',
+            bounds_error=False,
+            fill_value=extrapolation_type
+        )
+
+    def evaluate(self, density, temperature):
+
+        # need to handle zeros, also density and temperature can become negative due to cubic interpolation
+        if density.all() <= 0 or temperature.all() <= 0:
+            return 0.0
+
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
+        # calculate rate and convert from log10 space to linear space
+        return 10 ** self._rate(pts)
+
+
+class NullIonisationRate:
+    """
+    An ionisation rate that always returns zero.
+    Needed for use cases where the required atomic data is missing.
+    """
+    def __init__(self):
+        pass
+
+    def evaluate(self, density, temperature):
+        return 0.0
+
+
+class RecombinationRate:
+    """
+    Recombination rate.
+
+    Data is interpolated with cubic spline in log-log space.
+    Nearest neighbour extrapolation is used if extrapolate is True.
+
+    :param dict data: Recombination rate dictionary containing the following entries:
+
+    |       'ne': 1D array of size (N) with electron density in m^-3,
+    |       'te': 1D array of size (M) with electron temperature in eV,
+    |       'rate': 2D array of size (N, M) with recombination rate in m^3.s^-1.
+
+    :param bint extrapolate: Enable extrapolation (default=False).
+
+    :ivar tuple density_range: Electron density interpolation range.
+    :ivar tuple temperature_range: Electron temperature interpolation range.
+    :ivar dict raw_data: Dictionary containing the raw data.
+    """
+
+    def __init__(self, data, extrapolate=False):
+
+        self.raw_data = data
+
+        # unpack
+        ne = data['ne']
+        te = data['te']
+        rate = np.log10(data['rate'])
+
+        # store limits of data
+        self.density_range = ne.min(), ne.max()
+        self.temperature_range = te.min(), te.max()
+
+        # interpolate rate
+        # using nearest extrapolation to avoid infinite values at 0 for some rates
+        extrapolation_type = np.nan if not extrapolate else 'none'
+        self._rate = RegularGridInterpolator(
+            (np.log10(ne), np.log10(te)),
+            rate,
+            'cubic',
+            bounds_error=False,
+            fill_value=extrapolation_type
+        )
+
+    def evaluate(self, density, temperature):
+
+        # need to handle zeros, also density and temperature can become negative due to cubic interpolation
+        if density.all() <= 0 or temperature.all() <= 0:
+            return 0
+
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
+        # calculate rate and convert from log10 space to linear space
+        return 10 ** self._rate(pts)
+
+
+class NullRecombinationRate:
+    """
+    A recombination rate that always returns zero.
+    Needed for use cases where the required atomic data is missing.
+    """
+    def __init__(self):
+        pass
+
+    def evaluate(self, density, temperature):
+        return 0.0
+
+
+class ThermalCXRate:
+    """
+    Thermal charge exchange rate.
+
+    Data is interpolated with cubic spline in log-log space.
+    Linear extrapolation is used if extrapolate is True.
+
+    :param dict data: CX rate dictionary containing the following entries:
+
+    |       'ne': 1D array of size (N) with electron density in m^-3,
+    |       'te': 1D array of size (M) with electron temperature in eV,
+    |       'rate': 2D array of size (N, M) with thermal CX rate in m^3.s^-1.
+
+    :param bint extrapolate: Enable extrapolation (default=False).
+
+    :ivar tuple density_range: Electron density interpolation range.
+    :ivar tuple temperature_range: Electron temperature interpolation range.
+    :ivar dict raw_data: Dictionary containing the raw data.
+    """
+
+    def __init__(self, data, extrapolate=False):
+
+        self.raw_data = data
+
+        # unpack
+        ne = data['ne']
+        te = data['te']
+        rate = np.log10(data['rate'])
+
+        # store limits of data
+        self.density_range = ne.min(), ne.max()
+        self.temperature_range = te.min(), te.max()
+
+        # interpolate rate
+        extrapolation_type = np.nan if not extrapolate else 'none'
+        self._rate = RegularGridInterpolator(
+            (np.log10(ne), np.log10(te)),
+            rate,
+            'cubic',
+            bounds_error=False,
+            fill_value=extrapolation_type
+        )
+
+    def evaluate(self, density, temperature):
+
+        # need to handle zeros, also density and temperature can become negative due to cubic interpolation
+        if density.all() <= 0 or temperature.all() <= 0:
+            return 0.0
+
+        pts = np.column_stack((np.log10(density), np.log10(temperature)))
+        # calculate rate and convert from log10 space to linear space
+        return 10 ** self._rate(pts)
+
+
+class NullThermalCXRate:
+    """
+    A thermal CX rate that always returns zero.
+    Needed for use cases where the required atomic data is missing.
+    """
+    def __init__(self):
+        pass
+
+    def evaluate(self, density, temperature):
+        return 0.0

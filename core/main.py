@@ -243,3 +243,77 @@ class OpenADAS:
         wavelength = self.wavelength(receiver_element, receiver_charge - 1, transition)
 
         return ThermalCXPEC(data, extrapolate=self._permit_extrapolation)
+
+    def ionisation_rate(self, ion, charge):
+        """
+        Electron impact ionisation rate for a given species.
+
+        Open-ADAS data is interpolated with cubic spline in log-log space.
+        Nearest neighbour extrapolation is used when permit_extrapolation is True.
+
+        :param ion: Element object defining the ion type.
+        :param charge: Charge state of the ion.
+        :return: Ionisation rate in m^3/s as a function of electron density and temperature.
+        """
+
+        try:
+            # read ionisation rate from json file in the repository
+            data = repository.get_ionisation_rate(ion, charge, repository_path=self._data_path)
+
+        except RuntimeError:
+            if self._missing_rates_return_null:
+                return NullIonisationRate()
+            raise
+
+        return IonisationRate(data, extrapolate=self._permit_extrapolation)
+
+    def recombination_rate(self, ion, charge):
+        """
+        Recombination rate for a given species.
+
+        Open-ADAS data is interpolated with cubic spline in log-log space.
+        Nearest neighbour extrapolation is used when permit_extrapolation is True.
+
+        :param ion: Element object defining the ion type.
+        :param charge: Charge state of the ion.
+        :return: Recombination rate in m^3/s as a function of electron density and temperature.
+        """
+
+        try:
+            # read recombination rate from json file in the repository
+            data = repository.get_recombination_rate(ion, charge, repository_path=self._data_path)
+
+        except RuntimeError:
+            if self._missing_rates_return_null:
+                return NullRecombinationRate()
+            raise
+
+        return RecombinationRate(data, extrapolate=self._permit_extrapolation)
+
+    def thermal_cx_rate(self, donor_element, donor_charge, receiver_element, receiver_charge):
+        """
+        Thermal charge exchange effective rate coefficient for a given donor and receiver species.
+
+        Open-ADAS data is interpolated with cubic spline in log-log space.
+        Linear extrapolation is used when permit_extrapolation is True.
+
+        :param donor_element: Element object defining the donor ion type.
+        :param donor_charge: Charge state of the donor ion.
+        :param receiver_element: Element object defining the receiver ion type.
+        :param receiver_charge: Charge state of the receiver ion.
+        :return: Thermal charge exchange rate in m^3/s as a function of electron density and
+                 temperature.
+        """
+
+        try:
+            # read thermal CX rate from json file in the repository
+            data = repository.get_thermal_cx_rate(donor_element, donor_charge,
+                                                  receiver_element, receiver_charge,
+                                                  repository_path=self._data_path)
+
+        except RuntimeError:
+            if self._missing_rates_return_null:
+                return NullThermalCXRate()
+            raise
+
+        return ThermalCXRate(data, extrapolate=self._permit_extrapolation)
